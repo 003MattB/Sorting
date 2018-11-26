@@ -9,7 +9,7 @@ AbstractSorter.pm - an abstract class used for sorting arrays
      ##################                          ##################
      
      use SubSorter;
-     my $sorter = SubLayerSorter->new();
+     my $sorter = SubSorter->new();
      
      my @sorted = $sorter->sort(@array);
      #note: "ByNumeric" must be defined by the SubSorter
@@ -95,7 +95,7 @@ use warnings;
 use strict;
 
 
-#note AbstractLayerSorter cannot be instantiated directly; it must be subclassed.
+#note AbstractSorter cannot be instantiated directly; it must be subclassed.
 #no need to override this function in child class
 sub new {
      #constructor method
@@ -125,12 +125,13 @@ sub sortBy {
      use Scalar::Util 'blessed';
      my $self = shift;
      my $fun = shift;
+     my @array = @_;
 #check that the compare function is defined in the child class
      my $class = blessed($self);
      my $compareFunction = "_compare" . $fun;
      $self->can($compareFunction) or die $class . " {$compareFunction} not defined";
 #do the sorting
-     my $sorted = \@_;
+     my $sorted = \@array;
      my $len = @{$sorted};
      $self->_mergeSort($compareFunction,$sorted);
      return @{$sorted};
