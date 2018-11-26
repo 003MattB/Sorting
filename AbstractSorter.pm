@@ -82,7 +82,7 @@ Scalar::Util
 
 =head1 AUTHOR
 
-Matthew Bundy (mattb@protechmn.com)
+Matthew Bundy 
 
 =cut
 
@@ -93,7 +93,7 @@ package AbstractSorter;
 use Carp;
 use warnings;
 use strict;
-use lib "$ENV{GENESIS_DIR}/sys/scripts/matt/perlmod/genesis/structure";
+
 
 #note AbstractLayerSorter cannot be instantiated directly; it must be subclassed.
 #no need to override this function in child class
@@ -123,16 +123,14 @@ sub sort {
 
 sub sortBy {
      use Scalar::Util 'blessed';
-
      my $self = shift;
      my $fun = shift;
-     my @layers = @_;
 #check that the compare function is defined in the child class
      my $class = blessed($self);
      my $compareFunction = "_compare" . $fun;
      $self->can($compareFunction) or die $class . " {$compareFunction} not defined";
 #do the sorting
-     my $sorted = \@layers;
+     my $sorted = \@_;
      my $len = @{$sorted};
      $self->_mergeSort($compareFunction,$sorted);
      return @{$sorted};
@@ -205,24 +203,8 @@ sub _checkInterfaceBaseClass {
      }
 }
 
-sub _checkType {
-     #checks that all they layers match the defined type
-     #_type is defined in the child class
-     #if the type doesn't matter then set it to 'any'
-     my $self = shift;
-     my @layers = @_;
-     if ($self->{_type} eq 'any') {
-          return
-     }
-     foreach my $layer (@layers) {
-          my $layerType = $self->{JOB_MOD}{"LAYER" . $layer}{TYPE};
-          if ($self->{_type} ne $layerType) {
-               carp ("WARNING TYPE MISMATCH ($self->{_type}, $layerType)\n");
-          }
-     }
-}
 
-     #the main function used for sorting parameterize by the child class compare function
+#the main function used for sorting parameterize by the child class compare function
 sub _mergeSort {
      my $self = shift;
      my $compareFunc = shift;
